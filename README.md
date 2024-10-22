@@ -59,7 +59,7 @@ void loop() {
 }
 
 ```
-## If the quantity too many, Maybe Modbus function cannot response.
+⚠️**If the packet recieve count too many, Maybe Modbus function cannot response.**
 Try to adjust fetch time.
 ```cpp
   modbus.setFetchTimer(16);  //Interval between reading each byte (Default = 16ms)
@@ -71,8 +71,8 @@ Try to adjust fetch time.
   modbus.setdebug(true);//Default = false
 ```
 - Debug mode will show all data on same `Serial` port.
-- **Modbus poll software** will not working.
-- Using Debug mode via **Serial monitor software** only
+- `Modbus poll software` will not working.
+- Using Debug mode via `Serial monitor software` only
 
 ### License
 This project is licensed under the MIT License.
