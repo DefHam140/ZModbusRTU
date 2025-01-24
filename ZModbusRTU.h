@@ -2,9 +2,14 @@
 #define ZMODBUSRTU_H
 //ZModbusRTU
 #include "Arduino.h"
+
+typedef void (*WriteCoilCallback)(uint16_t address, uint16_t value);
+typedef void (*WriteRegisterCallback)(uint16_t address, uint16_t value);
 //Default Maximum each function is 100
 class ZModbusRTU {
   public:
+	void setWriteCoilCallback(WriteCoilCallback callback);
+	void setWriteRegisterCallback(WriteRegisterCallback callback);
     //Constructor with Serial, SlaveID, Default Maximum each function is 100
     ZModbusRTU(HardwareSerial &serialPort, int baudrate, int slaveid);
 	//start handle packet	
@@ -38,7 +43,12 @@ class ZModbusRTU {
 	
 	void setCoilStatusValue(uint16_t address, uint8_t value);
 	void setHoldingRegisterValue(uint16_t address, uint16_t value);
+	
+	//void FunctionEvent(uint8_t function, uint16_t value);
+		
   private:
+	WriteCoilCallback writeCoilCallback = nullptr;
+	WriteRegisterCallback writeRegisterCallback = nullptr;
     uint8_t _slaveid = 1;
     bool _state;
     HardwareSerial* _serial; // Pointer to Serial object

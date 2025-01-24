@@ -14,6 +14,13 @@ ZModbusRTU::ZModbusRTU(HardwareSerial &serialPort, int baudrate, int slaveid = 1
 void ZModbusRTU::setdebug(bool debug){
 	_debug = debug;
 }
+void ZModbusRTU::setWriteRegisterCallback(WriteRegisterCallback callback) {
+    writeRegisterCallback = callback;
+}
+void ZModbusRTU::setWriteCoilCallback(WriteCoilCallback callback) {
+    writeCoilCallback = callback;
+}
+
 //Default Maximum each function is 100
 void ZModbusRTU::setMaximum(int coilstatus, 
 							int inputstatus, 
@@ -263,6 +270,7 @@ void ZModbusRTU::modbusfunction(uint8_t* buff, uint16_t length){
 						CoilStatus[start] = (value==0xFF00?1:(value==0x0100?1:0));
 						if(_debug){_serial->printf("CoilStatus[%d]: %d\n", start, CoilStatus[start]);}
 						uint8_t cs[4] = {start/256, start%256, (CoilStatus[start]==1?0xFF:0), 0};
+						writeCoilCallback(start, CoilStatus[start]);
 						responsewrite(_slaveid, function, cs, 4);
 					}
 					
@@ -272,6 +280,10 @@ void ZModbusRTU::modbusfunction(uint8_t* buff, uint16_t length){
 						HoldingReg[start] = value;
 						if(_debug){_serial->printf("HoldingReg[%d]: %d\n", start, HoldingReg[start]);}
 						uint8_t hr[4] = {start/256, start%256, (HoldingReg[start]/256), (HoldingReg[start]%256)};
+						// Trigger the callback if set
+						if (writeRegisterCallback != nullptr) {
+							writeRegisterCallback(start, value);
+						}
 						responsewrite(_slaveid, function, hr, 4);
 					}
 				}
