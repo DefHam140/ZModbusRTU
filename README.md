@@ -50,12 +50,29 @@ void setup(){
                       MAX_HOLDINGREG, 
                       MAX_INPUTREG); //[Optional] (Everyfunctions Default = 100)
   modbus.begin();
-  modbus.setCoilStatusValue(0, 1);    // Set coil status to ON
-  modbus.setHoldingRegisterValue(0, 5050); // Set holding register to 5050
+  modbus.setCoilStatusValue(0, 1);    // Set coil status address 0 to ON
+  modbus.setHoldingRegisterValue(0, 123); // Set holding address 0 register to 123
+
+  modbus.setWriteRegisterCallback(onWriteRegister); //Call back when update Register value
+  modbus.setWriteCoilCallback(onWriteCoil); //Call back when update Coil value
 }
 
 void loop() {
   modbus.handle();  
+}
+
+void onWriteRegister(uint16_t address, uint16_t value) {
+  Serial.print("Register written at address: ");
+  Serial.print(address);
+  Serial.print(" with value: ");
+  Serial.println(value);
+}
+
+void onWriteCoil(uint16_t address, uint16_t value) {
+  Serial.print("Coil written at address: ");
+  Serial.print(address);
+  Serial.print(" with value: ");
+  Serial.println(value);
 }
 
 ```
